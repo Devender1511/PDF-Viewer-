@@ -1,0 +1,42 @@
+PDFView pdfView;
+
+setContentView(R.layout.activity_read_pdf);
+        pdfView = findViewById(R.id.pdfviweing);
+ 
+ 
+        Intent i = getIntent();
+        String id = i.getStringExtra("examId");
+        String ques = i.getStringExtra("exampdf");
+  new RetrivePDFStream().execute(ques);
+  
+   //View PDF into pdfviewer Dyanamically
+
+    class RetrivePDFStream extends AsyncTask<String, Void, InputStream> {
+
+
+        @Override
+        protected InputStream doInBackground(String... strings) {
+            InputStream inputStream = null;
+
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+                if (urlConnection.getResponseCode() == 200) {
+                    inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                }
+
+            } catch (IOException e)
+            {
+                return null;
+            }
+            return inputStream;
+        }
+        @Override
+        protected void onPostExecute(InputStream inputStream) {
+            pdfView.fromStream(inputStream).load();
+        }
+    }
+
+
+}
